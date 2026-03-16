@@ -1,98 +1,168 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Octicons } from '@expo/vector-icons';
+import { useRouter } from "expo-router";
+import React from "react";
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Checkbox, ProgressBar } from "react-native-paper";
+import MyAppBar from "../components/MyAppBar";
+import { useHabits } from "../contexts/HabitsContext";
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+export default function Index() {
+  const { habits, toggleHabit } = useHabits();
 
-export default function HomeScreen() {
+  const handlePress = () => {
+    router.push('/addHabits');
+    
+  };
+
+  const router = useRouter();
+
+
+
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+    <View style={styles.container}>
+      <View style={{ marginBottom: 20, marginTop: 10, }}>
+        <MyAppBar
+          title="Daily Habits"
+          showBack={false}
+          showCalendar={true}
+          onCalendarPress={null}
+          onBackPress={null} />
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      </View>
+
+      <TouchableOpacity style={styles.floatingButton} onPress={handlePress}>
+        <Octicons name="plus" size={24} color="white" />
+        
+      </TouchableOpacity>
+
+      <View style={styles.flatlist}>
+
+        <FlatList style={{ flex: 1 }}
+
+        contentContainerStyle={{ flexGrow: 1,  }}
+          
+          ListEmptyComponent={ 
+            <View style={{ alignItems: "center",  flex: 1, justifyContent : "center"  }}>
+              <Text style={{ fontSize: 24, color: "gray" }}>
+                No habits yet
+              </Text>
+              <Text style={{ color: "gray", marginTop: 18, paddingLeft: -10 }}>
+                Tap + to add your first habit k
+              </Text>
+            </View>
+          }
+          data={habits}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View style={styles.habitItem}>
+              <Checkbox
+                status={item.completed ? 'checked' : 'unchecked'}
+                onPress={() => { toggleHabit(item.id) }}
+                color="green"
+                uncheckedColor="grey"
+              />
+
+              <Text
+                style={[
+                  styles.habitText,
+                  item.completed && styles.completedText,
+                ]}
+              >
+                {item.name}
+              </Text>
+
+
+            </View>
+          )}
+        />
+      </View>
+
+
+      <View style={styles.progressContainer}>
+        <Text style={styles.progressText}>PROGRESS OVERVIEW</Text>
+        <View style={styles.progressOverview}>
+          <View>
+            <Text style={{ color: 'green', fontSize: 40, fontWeight: 'bold', paddingBottom: 10 }}>25%</Text>
+            <Text style={{ color: '#94a3b8' }}>1 of 4 Habits Completed</Text>
+          </View>
+          <ProgressBar progress={0.25} color="green" style={{ width: 150, height: 10, borderRadius: 5 }} />
+        </View>
+      </View>
+
+
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    backgroundColor: '#f8fafc',
+  },
+  flatlist: {
+    flex: 1,
+    marginBottom: 20,
+    
+  },
+  habitItem: {
+    backgroundColor: '#f8fafc',
+    padding: 16,
+    marginVertical: 8,
+    marginHorizontal: 20,
+    borderRadius: 25,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+
+
+    elevation: 3,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  habitText: {
+    fontSize: 18,
+    marginLeft: 7
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  completedText: {
+    textDecorationLine: 'line-through',
+    color: 'gray',
+  },
+  floatingButton: {
+    backgroundColor: 'green',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    bottom: 40,
+    right: 30,
+    elevation: 5, // For Android shadow
+    shadowColor: "#000", // For iOS shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    zIndex: 1, // Ensure the button is above other content
+  },
+  progressContainer: {
+    flex: 2 / 3,
+    paddingHorizontal: 20,
+    paddingVertical: 30,
+
+  },
+  progressText: {
+    fontSize: 25,
+    color: 'grey',
+  },
+
+  progressOverview: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 20,
+    backgroundColor: '#ecf4ed',
+    paddingVertical: 50,
+    paddingHorizontal: 20,
+    borderRadius: 30,
+    width: '95%',
+    alignItems: 'center',
+
   },
 });

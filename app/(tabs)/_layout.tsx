@@ -1,33 +1,45 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { Tabs } from "expo-router";
 
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+export default function Layout() {
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
+    <Tabs 
+    screenOptions={{
+      tabBarActiveTintColor : 'green',
+      tabBarInactiveTintColor : 'grey',
+      headerShown : false,
       }}>
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: "Home",
+          
+          tabBarIcon: ({ focused, color, size }) => (
+            <Ionicons name={focused ? 'home' : 'home-outline'} color={color} size={size} />
+          ),
         }}
       />
+
       <Tabs.Screen
-        name="explore"
+        name="stats"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: "Stats",
+          
+          tabBarIcon: ({ focused, color, size }) => (
+            <Ionicons name={focused ? 'stats-chart' : 'stats-chart-outline'} color={color} size={size} />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Profile",
+          
+          tabBarIcon: ({ focused, color, size }) => (
+            <Ionicons name={focused ? 'person' : 'person-outline'} color={color} size={size} />
+          ),
         }}
       />
     </Tabs>
